@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
 import tk.mybatis.spring.annotation.MapperScan;
 
@@ -13,6 +14,7 @@ import tk.mybatis.spring.annotation.MapperScan;
  */
 @SpringBootApplication
 @EnableEurekaClient
+@EnableFeignClients(basePackages = "com.client")
 @MapperScan(basePackages = {"com.service.auth.mapper"})
 @ComponentScan(basePackages = {"com.scottxuan","com.service.auth"})
 public class AuthApplication extends SpringBootServletInitializer {
