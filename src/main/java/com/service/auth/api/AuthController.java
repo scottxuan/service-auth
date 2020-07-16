@@ -9,6 +9,7 @@ import com.module.common.wechat.response.WxCode2SessionResponse;
 import com.scottxuan.base.result.ResultBo;
 import com.scottxuan.web.base.BaseController;
 import com.scottxuan.web.result.ResultDto;
+import com.service.auth.service.AuthService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -36,11 +37,11 @@ public class AuthController extends BaseController {
             @ApiImplicitParam(name = "code", value = "微信登录code", required = true, dataType = "string", paramType = "query")})
     @GetMapping
     public ResultDto login(@RequestParam String storeId, @RequestParam Integer id, @RequestParam String code) {
-//        String appId = "wxd7285bcf42c3836e";
-//        String secret = "28f0e6ca22962a20866127e134e5f835";
-//        WxCode2Session wxCode2Session = new WxCode2Session(appId, secret, code);
-//        WxCode2SessionResponse response = WxClient.request(new WxCode2SessionRequest(wxCode2Session));
-//        String openId = response.getOpenId();
+        String appId = "wxd7285bcf42c3836e";
+        String secret = "28f0e6ca22962a20866127e134e5f835";
+        WxCode2Session wxCode2Session = new WxCode2Session(appId, secret, code);
+        WxCode2SessionResponse response = WxClient.request(new WxCode2SessionRequest(wxCode2Session));
+        String openId = response.getOpenId();
 //        ResultDto resultDto = cusUserFeignClient.selectByParams(storeId, openId);
 //        if (!resultDto.isSuccess()) {
 //            return resultDto;
@@ -54,19 +55,15 @@ public class AuthController extends BaseController {
 //                return getResultDto(add);
 //            }
 //        }
-//        return getResultDto(resultDto);
-        return getResultDto();
+        return getResultDto(openId);
     }
 
     @Autowired
-    private AreaFeignClient areaFeignClient;
+    private AuthService authService;
 
     @ApiOperation("002--测试用例")
     @GetMapping("/test")
     public ResultDto test() {
-        ResultDto<Area> resultDto = areaFeignClient.findByCode("370000");
-        if (!resultDto.isSuccess()) {
-        }
-        return getResultDto();
+        return getResultDto(authService.test());
     }
 }
