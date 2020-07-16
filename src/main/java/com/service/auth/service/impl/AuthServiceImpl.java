@@ -1,6 +1,6 @@
 package com.service.auth.service.impl;
 
-import com.client.base.AreaFeignClient;
+import com.module.base.client.AreaFeignClient;
 import com.module.base.entity.Area;
 import com.scottxuan.base.result.ResultBo;
 import com.scottxuan.web.result.ResultDto;
