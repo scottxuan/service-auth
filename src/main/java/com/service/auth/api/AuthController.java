@@ -1,5 +1,6 @@
 package com.service.auth.api;
 
+import com.module.base.entity.Area;
 import com.module.common.error.ErrorCodes;
 import com.module.common.wechat.condition.WxCode2Session;
 import com.module.common.wechat.core.WxClient;
@@ -26,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class AuthController extends BaseController {
 
-    @ApiOperation("001--用户登录")
+    @ApiOperation("001--微信小程序登录")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "storeId", value = "店铺id", required = true, dataType = "string", paramType = "query"),
             @ApiImplicitParam(name = "id", value = "id", required = true, example = "1", dataType = "int", paramType = "query"),
@@ -62,7 +63,7 @@ public class AuthController extends BaseController {
 
     @ApiOperation("002--测试用例")
     @GetMapping("/test")
-    public ResultDto test() {
+    public ResultDto<Area> test() {
         return getResultDto(authService.test());
     }
 }
