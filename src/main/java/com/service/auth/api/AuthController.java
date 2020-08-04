@@ -1,6 +1,6 @@
 package com.service.auth.api;
 
-import com.module.base.entity.Area;
+import com.service.auth.utils.RsaUtils;
 import com.module.common.error.ErrorCodes;
 import com.module.common.wechat.condition.WxCode2Session;
 import com.module.common.wechat.core.WxClient;
@@ -19,6 +19,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.PrivateKey;
+import java.security.PublicKey;
+
 /**
  * @author : scottxuan
  */
@@ -32,8 +35,8 @@ public class AuthController extends BaseController {
             @ApiImplicitParam(name = "storeId", value = "店铺id", required = true, dataType = "string", paramType = "query"),
             @ApiImplicitParam(name = "id", value = "id", required = true, example = "1", dataType = "int", paramType = "query"),
             @ApiImplicitParam(name = "code", value = "微信登录code", required = true, dataType = "string", paramType = "query")})
-    @GetMapping
-    public ResultDto login(@RequestParam String storeId, @RequestParam Integer id, @RequestParam String code) {
+    @GetMapping("/mini/login")
+    public ResultDto miniLogin(@RequestParam String storeId, @RequestParam Integer id, @RequestParam String code) {
         String appId = "wxd7285bcf42c3836e";
         String secret = "28f0e6ca22962a20866127e134e5f835";
         WxCode2Session wxCode2Session = new WxCode2Session(appId, secret, code);
@@ -61,9 +64,31 @@ public class AuthController extends BaseController {
     @Autowired
     private AuthService authService;
 
-    @ApiOperation("002--测试用例")
-    @GetMapping("/test")
-    public ResultDto<Area> test() {
-        return getResultDto(authService.test());
+    @ApiOperation("002--系统用户登录")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "account", value = "账户", required = true, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "password", value = "密码", required = true, dataType = "string", paramType = "query")})
+    @GetMapping("/login")
+    public ResultDto login(@RequestParam String account, @RequestParam String password) {
+        return getResultDto();
+    }
+
+        /**
+         *  测试使用
+         * @param args
+         */
+    public static void main(String[] args) throws Exception {
+        // 调用generateKey方法，输入公私钥的地址，生成秘钥的明文（原料）。即可在指定的地方生成秘钥
+        RsaUtils.generateKey("E:\\service-auth\\src\\main\\resources\\key.pub","E:\\service-auth\\src\\main\\resources\\key.pri","scottxuan");
+
+        // 这是输入地址获取公有秘钥的，还有一个是输入字节对象获取的。下面获取私有秘钥同理
+        PublicKey publicKey = RsaUtils.getPublicKey("E:\\service-auth\\src\\main\\resources\\key.pub");
+        System.out.println("这是公有的秘钥："+publicKey);
+
+        PrivateKey privateKey = RsaUtils.getPrivateKey("E:\\service-auth\\src\\main\\resources\\key.pri");
+        System.out.println("这是私有的秘钥："+privateKey);
+
+
+        System.out.println("ok");
     }
 }

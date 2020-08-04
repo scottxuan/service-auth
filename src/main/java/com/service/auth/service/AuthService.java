@@ -1,9 +1,8 @@
 package com.service.auth.service;
 
-import com.module.base.entity.Area;
-import com.scottxuan.base.result.ResultBo;
 
+/**
+ * @author pc
+ */
 public interface AuthService {
-
-    ResultBo<Area> test();
 }
