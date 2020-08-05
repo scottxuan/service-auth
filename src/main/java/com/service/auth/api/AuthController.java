@@ -8,13 +8,11 @@ import com.module.common.wechat.condition.WxCode2Session;
 import com.module.common.wechat.core.WxClient;
 import com.module.common.wechat.request.WxCode2SessionRequest;
 import com.module.common.wechat.response.WxCode2SessionResponse;
-import com.module.user.client.SysUserFeignClient;
 import com.scottxuan.web.base.BaseController;
 import com.scottxuan.web.result.ResultDto;
 import com.service.auth.service.AuthService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -22,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
  * @author : scottxuan
  */
 @Api(tags = "10000--认证管理")
-@RequestMapping("${api}/auth")
 @RestController
 public class AuthController extends BaseController implements AuthApi {
 

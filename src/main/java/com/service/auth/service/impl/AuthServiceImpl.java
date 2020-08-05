@@ -35,7 +35,7 @@ public class AuthServiceImpl implements AuthService {
         }
         LoginResult loginResult = new LoginResult();
         loginResult.setUserInfo(sysUser);
-        return null;
+        return ResultBo.of(loginResult);
     }
 
     @Override

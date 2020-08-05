@@ -1,7 +1,7 @@
 spring:
   datasource:
     druid:
-      url: jdbc:mysql://111.229.120.182:3306/basic-data?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+      url: jdbc:mysql://111.229.120.182:3306/logistics?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
       username: root
       password: zhaoxuan734
       driver-class-name: com.mysql.cj.jdbc.Driver
