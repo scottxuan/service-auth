@@ -21,8 +21,8 @@
         </dependency>
         <dependency>
             <groupId>com.logistics.modules</groupId>
-            <artifactId>module-base</artifactId>
-            <version>${module-base.version}</version>
+            <artifactId>module-user</artifactId>
+            <version>${module-user.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
