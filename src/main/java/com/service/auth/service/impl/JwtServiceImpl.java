@@ -83,12 +83,10 @@ public class JwtServiceImpl implements JwtService {
     }
 
     public PrivateKey getPrivateKey() {
-        FileReader reader = null;
+        BufferedReader bufferedReader = null;
         PrivateKey privateKey = null;
         try {
-            File file = new File(this.getClass().getResource("/privateKey.key").getPath());
-            reader = new FileReader(file);
-            BufferedReader bufferedReader = new BufferedReader(reader);
+            bufferedReader = new BufferedReader(new FileReader(this.getClass().getResource("/privateKey.key").getPath()));
             StringBuilder privateKeyBuilder = new StringBuilder();
             String line;
             while ((line = bufferedReader.readLine()) != null) {
@@ -104,9 +102,9 @@ public class JwtServiceImpl implements JwtService {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            if (reader != null) {
+            if (bufferedReader != null) {
                 try {
-                    reader.close();
+                    bufferedReader.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -116,12 +114,10 @@ public class JwtServiceImpl implements JwtService {
     }
 
     public PublicKey getPublicKey() {
-        FileReader reader = null;
+        BufferedReader bufferedReader = null;
         PublicKey publicKey = null;
         try {
-            File file = new File(this.getClass().getResource("/publicKey.key").getPath());
-            reader = new FileReader(file);
-            BufferedReader bufferedReader = new BufferedReader(reader);
+            bufferedReader = new BufferedReader(new FileReader(this.getClass().getResource("/publicKey.key").getPath()));
             StringBuilder privateKeyBuilder = new StringBuilder();
             String line;
             while ((line = bufferedReader.readLine()) != null) {
@@ -137,9 +133,9 @@ public class JwtServiceImpl implements JwtService {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            if (reader != null) {
+            if (bufferedReader != null) {
                 try {
-                    reader.close();
+                    bufferedReader.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
