@@ -36,4 +36,11 @@ public interface AuthService {
      * @return
      */
     ResultBo<LoginResult> customerMiniLogin(String code);
+
+    /**
+     * token刷新
+     * @param refreshToken
+     * @return
+     */
+    ResultBo<LoginResult> refreshToken(String refreshToken);
 }

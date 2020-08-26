@@ -53,4 +53,9 @@ public class AuthController extends BaseController implements AuthApi {
     public ResultDto<LoginResult> customerMiniLogin(String code) {
         return getResultDto(authService.customerMiniLogin(code));
     }
+
+    @Override
+    public ResultDto<LoginResult> refreshToken(String refreshToken) {
+        return getResultDto(authService.refreshToken(refreshToken));
+    }
 }
