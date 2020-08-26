@@ -76,6 +76,16 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    public ResultBo<Boolean> checkAccessToken(String accessToken) {
+        try {
+            jwtService.parseToken(accessToken);
+            return ResultBo.of(Boolean.TRUE);
+        } catch (ExpiredJwtException e) {
+            return ResultBo.of(ErrorCodes.SYS_ERROR_401);
+        }
+    }
+
+    @Override
     public ResultBo<LoginResult> refreshToken(String refreshToken) {
         Claims claims;
         try {

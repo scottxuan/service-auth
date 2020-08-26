@@ -10,6 +10,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Date;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author : pc
@@ -20,17 +21,18 @@ public class JwtServiceImpl implements JwtService {
 
     private static final long ACCESS_TOKEN_OUT_TIME = 2 * 60 * 60 * 1000L;
     private static final long REFRESH_TOKEN_OUT_TIME = 2 * 24 * 60 * 60 * 1000L;
-    private static final PrivateKey PRIVATE_KEY;
-    private static final PublicKey PUBLIC_KEY;
+    private static PrivateKey privateKey = null;
+    private static PublicKey publicKey = null;
 
-    static {
-        PRIVATE_KEY = getPrivateKey();
-        PUBLIC_KEY = getPublicKey();
-    }
+    private static final AtomicBoolean PRIVATE_KEY_IS_LOAD = new AtomicBoolean(true);
+    private static final AtomicBoolean PUBLIC_KEY_IS_LOAD = new AtomicBoolean(true);
 
     @Override
     public String createAccessToken(Map<String, Object> map) {
         try {
+            if(PRIVATE_KEY_IS_LOAD.compareAndSet(true,false) || privateKey == null){
+                privateKey = getPrivateKey();
+            }
             long millis = System.currentTimeMillis();
             JwtBuilder builder = Jwts.builder()
                     .setHeaderParam("alg", "RS256")
@@ -38,7 +40,7 @@ public class JwtServiceImpl implements JwtService {
             for (String key : map.keySet()) {
                 builder.claim(key, map.get(key));
             }
-            builder.signWith(SignatureAlgorithm.RS256, PRIVATE_KEY)
+            builder.signWith(SignatureAlgorithm.RS256, privateKey)
                     .setExpiration(new Date(millis + ACCESS_TOKEN_OUT_TIME));
             return builder.compact();
         } catch (Exception e) {
@@ -50,6 +52,9 @@ public class JwtServiceImpl implements JwtService {
     @Override
     public String createRefreshToken(Map<String, Object> map) {
         try {
+            if(PRIVATE_KEY_IS_LOAD.compareAndSet(true,false) || privateKey ==null){
+                privateKey = getPrivateKey();
+            }
             long millis = System.currentTimeMillis();
             JwtBuilder builder = Jwts.builder()
                     .setHeaderParam("alg", "RS256")
@@ -57,7 +62,7 @@ public class JwtServiceImpl implements JwtService {
             for (String key : map.keySet()) {
                 builder.claim(key, map.get(key));
             }
-            builder.signWith(SignatureAlgorithm.RS256, PRIVATE_KEY)
+            builder.signWith(SignatureAlgorithm.RS256, privateKey)
                     .setExpiration(new Date(millis + REFRESH_TOKEN_OUT_TIME));
             return builder.compact();
         } catch (Exception e) {
@@ -68,22 +73,25 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public Claims parseToken(String token) {
+        if(PUBLIC_KEY_IS_LOAD.compareAndSet(true,false) || publicKey == null){
+            publicKey = getPublicKey();
+        }
         Jws<Claims> claimsJws = Jwts.parser()
-                .setSigningKey(PUBLIC_KEY)
+                .setSigningKey(publicKey)
                 .parseClaimsJws(token);
         return claimsJws.getBody();
     }
 
-    public static PrivateKey getPrivateKey() {
+    public PrivateKey getPrivateKey() {
         FileReader reader = null;
         PrivateKey privateKey = null;
         try {
-            File file = new File(JwtServiceImpl.class.getResource("/privateKey.key").getPath());
+            File file = new File(this.getClass().getResource("/privateKey.key").getPath());
             reader = new FileReader(file);
             BufferedReader bufferedReader = new BufferedReader(reader);
             StringBuilder privateKeyBuilder = new StringBuilder();
             String line;
-            if ((line = bufferedReader.readLine()) != null) {
+            while ((line = bufferedReader.readLine()) != null) {
                 privateKeyBuilder.append(line);
             }
             String privateKeyString = privateKeyBuilder.toString().trim();
@@ -107,16 +115,16 @@ public class JwtServiceImpl implements JwtService {
         return privateKey;
     }
 
-    public static PublicKey getPublicKey() {
+    public PublicKey getPublicKey() {
         FileReader reader = null;
         PublicKey publicKey = null;
         try {
-            File file = new File(JwtServiceImpl.class.getResource("/publicKey.key").getPath());
+            File file = new File(this.getClass().getResource("/publicKey.key").getPath());
             reader = new FileReader(file);
             BufferedReader bufferedReader = new BufferedReader(reader);
             StringBuilder privateKeyBuilder = new StringBuilder();
             String line;
-            if ((line = bufferedReader.readLine()) != null) {
+            while ((line = bufferedReader.readLine()) != null) {
                 privateKeyBuilder.append(line);
             }
             String publicKeyString = privateKeyBuilder.toString().trim();

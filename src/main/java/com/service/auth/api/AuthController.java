@@ -55,6 +55,11 @@ public class AuthController extends BaseController implements AuthApi {
     }
 
     @Override
+    public ResultDto<Boolean> checkAccessToken(String accessToken) {
+        return getResultDto(authService.checkAccessToken(accessToken));
+    }
+
+    @Override
     public ResultDto<LoginResult> refreshToken(String refreshToken) {
         return getResultDto(authService.refreshToken(refreshToken));
     }
