@@ -14,6 +14,7 @@ import com.scottxuan.web.result.ResultDto;
 import com.service.auth.service.AuthService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Api(tags = "10000--认证管理")
 @RestController
+@RequestMapping(AuthApi.MAPPING)
 public class AuthController extends BaseController implements AuthApi {
 
     @Autowired

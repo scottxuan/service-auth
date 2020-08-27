@@ -1,9 +1,8 @@
 package com.service.auth.service.impl;
 
-import com.module.auth.enums.SystemType;
 import com.module.common.constants.JwtConstant;
+import com.scottxuan.base.utils.RSAUtils;
 import com.service.auth.service.JwtService;
-import com.service.auth.utils.RSAUtils;
 import io.jsonwebtoken.*;
 import org.springframework.stereotype.Service;
 
@@ -12,7 +11,6 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
