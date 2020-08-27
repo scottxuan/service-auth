@@ -1,5 +1,7 @@
 package com.service.auth.service.impl;
 
+import com.module.auth.enums.SystemType;
+import com.module.common.constants.JwtConstant;
 import com.service.auth.service.JwtService;
 import com.service.auth.utils.RSAUtils;
 import io.jsonwebtoken.*;
@@ -9,6 +11,7 @@ import java.io.*;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -19,8 +22,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Service
 public class JwtServiceImpl implements JwtService {
 
-    private static final long ACCESS_TOKEN_OUT_TIME = 2 * 60 * 60 * 1000L;
-    private static final long REFRESH_TOKEN_OUT_TIME = 2 * 24 * 60 * 60 * 1000L;
     private static PrivateKey privateKey = null;
     private static PublicKey publicKey = null;
 
@@ -28,42 +29,19 @@ public class JwtServiceImpl implements JwtService {
     private static final AtomicBoolean PUBLIC_KEY_IS_LOAD = new AtomicBoolean(true);
 
     @Override
-    public String createAccessToken(Map<String, Object> map) {
+    public String createToken(Object userInfo, List<String> roles, List<String> permissions, Date expireDate) {
         try {
             if(PRIVATE_KEY_IS_LOAD.compareAndSet(true,false) || privateKey == null){
                 privateKey = getPrivateKey();
             }
-            long millis = System.currentTimeMillis();
             JwtBuilder builder = Jwts.builder()
                     .setHeaderParam("alg", "RS256")
                     .setHeaderParam("typ", "JWT");
-            for (String key : map.keySet()) {
-                builder.claim(key, map.get(key));
-            }
+            builder.claim(JwtConstant.USER_INFO, userInfo);
+            builder.claim(JwtConstant.ROLES, roles);
+            builder.claim(JwtConstant.PERMISSIONS, permissions);
             builder.signWith(SignatureAlgorithm.RS256, privateKey)
-                    .setExpiration(new Date(millis + ACCESS_TOKEN_OUT_TIME));
-            return builder.compact();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    @Override
-    public String createRefreshToken(Map<String, Object> map) {
-        try {
-            if(PRIVATE_KEY_IS_LOAD.compareAndSet(true,false) || privateKey ==null){
-                privateKey = getPrivateKey();
-            }
-            long millis = System.currentTimeMillis();
-            JwtBuilder builder = Jwts.builder()
-                    .setHeaderParam("alg", "RS256")
-                    .setHeaderParam("typ", "JWT");
-            for (String key : map.keySet()) {
-                builder.claim(key, map.get(key));
-            }
-            builder.signWith(SignatureAlgorithm.RS256, privateKey)
-                    .setExpiration(new Date(millis + REFRESH_TOKEN_OUT_TIME));
+                    .setExpiration(expireDate);
             return builder.compact();
         } catch (Exception e) {
             e.printStackTrace();

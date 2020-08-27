@@ -3,6 +3,7 @@ package com.service.auth.service;
 
 import com.module.auth.dto.LoginDto;
 import com.module.auth.dto.LoginResult;
+import com.module.auth.dto.TokenPair;
 import com.scottxuan.base.result.ResultBo;
 
 /**
@@ -46,8 +47,8 @@ public interface AuthService {
 
     /**
      * token刷新
-     * @param refreshToken
+     * @param tokenPair
      * @return
      */
-    ResultBo<LoginResult> refreshToken(String refreshToken);
+    ResultBo<TokenPair> refreshToken(TokenPair tokenPair);
 }

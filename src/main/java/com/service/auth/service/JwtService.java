@@ -1,8 +1,10 @@
 package com.service.auth.service;
 
+import com.module.auth.enums.SystemType;
 import io.jsonwebtoken.Claims;
 
-import java.util.Map;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author : pc
@@ -10,18 +12,14 @@ import java.util.Map;
  */
 public interface JwtService {
     /**
-     * 创建accessToken
-     * @param map
+     * 创建Token
+     * @param userInfo
+     * @param roles
+     * @param permissions
+     * @param expireDate
      * @return
      */
-    String createAccessToken(Map<String, Object> map);
-
-    /**
-     * 创建refreshToken
-     * @param map
-     * @return
-     */
-    String createRefreshToken(Map<String, Object> map);
+    String createToken(Object userInfo, List<String> roles, List<String> permissions, Date expireDate);
 
     /**
      * token解析

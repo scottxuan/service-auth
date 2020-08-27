@@ -3,6 +3,7 @@ package com.service.auth.api;
 import com.module.auth.api.AuthApi;
 import com.module.auth.dto.LoginDto;
 import com.module.auth.dto.LoginResult;
+import com.module.auth.dto.TokenPair;
 import com.module.common.error.ErrorCodes;
 import com.module.common.wechat.condition.WxCode2Session;
 import com.module.common.wechat.core.WxClient;
@@ -60,7 +61,7 @@ public class AuthController extends BaseController implements AuthApi {
     }
 
     @Override
-    public ResultDto<LoginResult> refreshToken(String refreshToken) {
-        return getResultDto(authService.refreshToken(refreshToken));
+    public ResultDto<TokenPair> refreshToken(TokenPair tokenPair) {
+        return getResultDto(authService.refreshToken(tokenPair));
     }
 }
