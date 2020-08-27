@@ -95,7 +95,9 @@ public class AuthServiceImpl implements AuthService {
     public ResultBo<TokenPair> refreshToken(TokenPair tokenPair) {
         Claims claims;
         try {
-            jwtService.parseToken(tokenPair.getAccessToken());
+            Claims accessTokenClaims = jwtService.parseToken(tokenPair.getAccessToken());
+            Date accessTokenExpireDate = accessTokenClaims.getExpiration();
+            tokenPair.setAccessTokenExpireDate(accessTokenExpireDate);
         } catch (ExpiredJwtException e1) {
             try {
                 claims = jwtService.parseToken(tokenPair.getRefreshToken());
@@ -110,7 +112,7 @@ public class AuthServiceImpl implements AuthService {
             String accessTokenNew = jwtService.createToken(userInfo,roles,permissions,accessTokenExpireDate);
             Date refreshTokenExpireDate = new Date(startMillis + REFRESH_TOKEN_OUT_TIME);
             String refreshTokenNew = jwtService.createToken(userInfo,roles,permissions,refreshTokenExpireDate);
-            return ResultBo.of(new TokenPair(accessTokenNew,refreshTokenNew));
+            return ResultBo.of(new TokenPair(accessTokenNew,refreshTokenNew,accessTokenExpireDate));
         }
         return ResultBo.of(tokenPair);
     }
