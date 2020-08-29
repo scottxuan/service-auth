@@ -17,10 +17,26 @@
         <dependency>
             <groupId>com.logistics.modules</groupId>
             <artifactId>module-auth</artifactId>
+            <version>${module-auth.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.logistics.modules</groupId>
+            <artifactId>module-system</artifactId>
+            <version>${module-system.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>guava</artifactId>
+                    <groupId>com.google.guava</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
         </dependency>
     </dependencies>
 
@@ -36,7 +52,8 @@
                 <includes>
                     <include>bootstrap.yml</include>
                     <include>bootstrap-${profileActive}.yml</include>
-                    <include>**/**.xml</include>
+                    <include>/**.xml</include>
+                    <include>/**.key</include>
                 </includes>
             </resource>
         </resources>
