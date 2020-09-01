@@ -111,20 +111,4 @@ public class AuthServiceImpl implements AuthService {
         }
         return ResultBo.of(tokenPair);
     }
-
-    @Override
-    public ResultBo<Pair<Integer,Integer>> getCurrentUserIdAndSource(String accessToken) {
-        if (StringUtils.isBlank(accessToken)) {
-            return  ResultBo.of(new Pair<>(-1,-1));
-        }
-        Claims claims;
-        try {
-            claims = jwtService.parseToken(accessToken);
-            Integer userId = (Integer)claims.get(JwtConstant.USER_ID);
-            Integer userSource = (Integer)claims.get(JwtConstant.USER_SOURCE);
-            return ResultBo.of(new Pair<>(userId,userSource));
-        }catch (ExpiredJwtException e) {
-            return  ResultBo.of(new Pair<>(-1,-1));
-        }
-    }
 }

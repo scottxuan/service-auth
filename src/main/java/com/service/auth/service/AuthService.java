@@ -48,10 +48,4 @@ public interface AuthService {
      */
     ResultBo<TokenPair> refreshToken(String accessToken,String refreshToken);
 
-    /**
-     * token刷新
-     * @param accessToken
-     * @return
-     */
-    ResultBo<Pair<Integer,Integer>> getCurrentUserIdAndSource(String accessToken);
 }

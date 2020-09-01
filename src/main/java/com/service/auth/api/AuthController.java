@@ -18,6 +18,8 @@ import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -64,11 +66,5 @@ public class AuthController extends BaseController implements AuthApi {
     @Override
     public ResultDto<TokenPair> refreshToken(String accessToken,String refreshToken) {
         return getResultDto(authService.refreshToken(accessToken, refreshToken));
-    }
-
-    @Override
-    public ResultDto<Pair<Integer,Integer>> currentUserId(HttpServletRequest request) {
-        String accessToken = request.getHeader("accessToken");
-        return getResultDto(authService.getCurrentUserIdAndSource(accessToken));
     }
 }
