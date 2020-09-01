@@ -19,6 +19,7 @@ import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -82,25 +83,19 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public ResultBo<Boolean> checkAccessToken(String accessToken) {
-        try {
-            jwtService.parseToken(accessToken);
-            return ResultBo.of(Boolean.TRUE);
-        } catch (ExpiredJwtException e) {
-            return ResultBo.of(ErrorCodes.ACCESS_TOKEN_TIME_OUT);
-        }
-    }
-
-    @Override
-    public ResultBo<TokenPair> refreshToken(TokenPair tokenPair) {
+    public ResultBo<TokenPair> refreshToken(String accessToken, String refreshToken) {
         Claims claims;
+        TokenPair tokenPair;
         try {
-            Claims accessTokenClaims = jwtService.parseToken(tokenPair.getAccessToken());
+            Claims accessTokenClaims = jwtService.parseToken(accessToken);
+            tokenPair = new TokenPair();
             Date accessTokenExpireDate = accessTokenClaims.getExpiration();
+            tokenPair.setAccessToken(accessToken);
+            tokenPair.setRefreshToken(refreshToken);
             tokenPair.setAccessTokenExpireDate(accessTokenExpireDate);
         } catch (ExpiredJwtException e1) {
             try {
-                claims = jwtService.parseToken(tokenPair.getRefreshToken());
+                claims = jwtService.parseToken(refreshToken);
             } catch (ExpiredJwtException e2) {
                 return ResultBo.of(ErrorCodes.SYS_ERROR_401);
             }

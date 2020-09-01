@@ -39,16 +39,9 @@ public interface AuthService {
     ResultBo<LoginResult> customerMiniLogin(String code);
 
     /**
-     * accessToken验证
-     * @param accessToken
-     * @return
-     */
-    ResultBo<Boolean> checkAccessToken(String accessToken);
-
-    /**
      * token刷新
-     * @param tokenPair
+     * @param refreshToken
      * @return
      */
-    ResultBo<TokenPair> refreshToken(TokenPair tokenPair);
+    ResultBo<TokenPair> refreshToken(String accessToken,String refreshToken);
 }
