@@ -4,7 +4,9 @@ package com.service.auth.service;
 import com.module.auth.dto.LoginDto;
 import com.module.auth.dto.LoginResult;
 import com.module.auth.dto.TokenPair;
+import com.scottxuan.base.pair.Pair;
 import com.scottxuan.base.result.ResultBo;
+import io.jsonwebtoken.Claims;
 
 /**
  * @author pc
@@ -40,8 +42,16 @@ public interface AuthService {
 
     /**
      * token刷新
+     * @param accessToken
      * @param refreshToken
      * @return
      */
     ResultBo<TokenPair> refreshToken(String accessToken,String refreshToken);
+
+    /**
+     * token刷新
+     * @param accessToken
+     * @return
+     */
+    ResultBo<Pair<Integer,Integer>> getCurrentUserIdAndSource(String accessToken);
 }

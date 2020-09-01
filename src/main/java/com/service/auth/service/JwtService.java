@@ -1,6 +1,7 @@
 package com.service.auth.service;
 
 import com.module.auth.enums.SystemType;
+import com.module.common.enums.UserSource;
 import io.jsonwebtoken.Claims;
 
 import java.util.Date;
@@ -13,16 +14,19 @@ import java.util.List;
 public interface JwtService {
     /**
      * 创建Token
-     * @param userInfo
+     *
+     * @param userId
+     * @param userSource
      * @param roles
      * @param permissions
      * @param expireDate
      * @return
      */
-    String createToken(Object userInfo, List<String> roles, List<String> permissions, Date expireDate);
+    String createToken(Integer userId, UserSource userSource, List<String> roles, List<String> permissions, Date expireDate);
 
     /**
      * token解析
+     *
      * @param token
      * @return
      */

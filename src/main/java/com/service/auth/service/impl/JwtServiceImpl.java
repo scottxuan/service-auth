@@ -1,6 +1,7 @@
 package com.service.auth.service.impl;
 
 import com.module.common.constants.JwtConstant;
+import com.module.common.enums.UserSource;
 import com.scottxuan.base.utils.RSAUtils;
 import com.service.auth.service.JwtService;
 import io.jsonwebtoken.*;
@@ -27,7 +28,7 @@ public class JwtServiceImpl implements JwtService {
     private static final AtomicBoolean PUBLIC_KEY_IS_LOAD = new AtomicBoolean(true);
 
     @Override
-    public String createToken(Object userInfo, List<String> roles, List<String> permissions, Date expireDate) {
+    public String createToken(Integer userId, UserSource userSource, List<String> roles, List<String> permissions, Date expireDate) {
         try {
             if(PRIVATE_KEY_IS_LOAD.compareAndSet(true,false) || privateKey == null){
                 privateKey = getPrivateKey();
@@ -35,7 +36,8 @@ public class JwtServiceImpl implements JwtService {
             JwtBuilder builder = Jwts.builder()
                     .setHeaderParam("alg", "RS256")
                     .setHeaderParam("typ", "JWT");
-            builder.claim(JwtConstant.USER_INFO, userInfo);
+            builder.claim(JwtConstant.USER_ID, userId);
+            builder.claim(JwtConstant.USER_SOURCE, userSource.getSource());
             builder.claim(JwtConstant.ROLES, roles);
             builder.claim(JwtConstant.PERMISSIONS, permissions);
             builder.signWith(SignatureAlgorithm.RS256, privateKey)

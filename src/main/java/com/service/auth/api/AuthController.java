@@ -9,6 +9,8 @@ import com.module.common.wechat.condition.WxCode2Session;
 import com.module.common.wechat.core.WxClient;
 import com.module.common.wechat.request.WxCode2SessionRequest;
 import com.module.common.wechat.response.WxCode2SessionResponse;
+import com.module.system.entity.SysUser;
+import com.scottxuan.base.pair.Pair;
 import com.scottxuan.web.base.BaseController;
 import com.scottxuan.web.result.ResultDto;
 import com.service.auth.service.AuthService;
@@ -16,6 +18,8 @@ import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -60,5 +64,11 @@ public class AuthController extends BaseController implements AuthApi {
     @Override
     public ResultDto<TokenPair> refreshToken(String accessToken,String refreshToken) {
         return getResultDto(authService.refreshToken(accessToken, refreshToken));
+    }
+
+    @Override
+    public ResultDto<Pair<Integer,Integer>> currentUserId(HttpServletRequest request) {
+        String accessToken = request.getHeader("accessToken");
+        return getResultDto(authService.getCurrentUserIdAndSource(accessToken));
     }
 }

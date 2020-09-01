@@ -1,28 +1,27 @@
 package com.service.auth.service.impl;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.module.auth.dto.LoginDto;
 import com.module.auth.dto.LoginResult;
 import com.module.auth.dto.TokenPair;
-import com.module.auth.enums.SystemType;
 import com.module.common.constants.JwtConstant;
+import com.module.common.enums.UserSource;
 import com.module.common.error.ErrorCodes;
 import com.module.system.client.SysUserFeignClient;
 import com.module.system.entity.SysUser;
+import com.scottxuan.base.pair.Pair;
 import com.scottxuan.base.result.ResultBo;
 import com.scottxuan.web.result.ResultDto;
 import com.service.auth.service.AuthService;
 import com.service.auth.service.JwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author pc
@@ -56,9 +55,9 @@ public class AuthServiceImpl implements AuthService {
         List<String> permissions = Lists.newArrayList();
         long startMillis = System.currentTimeMillis();
         Date accessTokenExpireDate = new Date(startMillis + ACCESS_TOKEN_OUT_TIME);
-        String accessTokenNew = jwtService.createToken(sysUser,roles,permissions,accessTokenExpireDate);
+        String accessTokenNew = jwtService.createToken(sysUser.getId(), UserSource.SYS, roles, permissions, accessTokenExpireDate);
         Date refreshTokenExpireDate = new Date(startMillis + REFRESH_TOKEN_OUT_TIME);
-        String refreshTokenNew = jwtService.createToken(sysUser,roles,permissions,refreshTokenExpireDate);
+        String refreshTokenNew = jwtService.createToken(sysUser.getId(), UserSource.SYS, roles, permissions, refreshTokenExpireDate);
         LoginResult loginResult = new LoginResult();
         loginResult.setUserInfo(sysUser);
         loginResult.setAccessToken(accessTokenNew);
@@ -99,16 +98,33 @@ public class AuthServiceImpl implements AuthService {
             } catch (ExpiredJwtException e2) {
                 return ResultBo.of(ErrorCodes.SYS_ERROR_401);
             }
-            Object userInfo = claims.get(JwtConstant.USER_INFO);
-            List<String> roles = (List<String>)claims.get(JwtConstant.ROLES);
-            List<String> permissions = (List<String>)claims.get(JwtConstant.PERMISSIONS);
+            Integer userId = (Integer)claims.get(JwtConstant.USER_ID);
+            Integer userSource = (Integer)claims.get(JwtConstant.USER_SOURCE);
+            List<String> roles = (List<String>) claims.get(JwtConstant.ROLES);
+            List<String> permissions = (List<String>) claims.get(JwtConstant.PERMISSIONS);
             long startMillis = System.currentTimeMillis();
             Date accessTokenExpireDate = new Date(startMillis + ACCESS_TOKEN_OUT_TIME);
-            String accessTokenNew = jwtService.createToken(userInfo,roles,permissions,accessTokenExpireDate);
+            String accessTokenNew = jwtService.createToken(userId,UserSource.getUserSource(userSource) ,roles, permissions, accessTokenExpireDate);
             Date refreshTokenExpireDate = new Date(startMillis + REFRESH_TOKEN_OUT_TIME);
-            String refreshTokenNew = jwtService.createToken(userInfo,roles,permissions,refreshTokenExpireDate);
-            return ResultBo.of(new TokenPair(accessTokenNew,refreshTokenNew,accessTokenExpireDate));
+            String refreshTokenNew = jwtService.createToken(userId, UserSource.getUserSource(userSource),roles, permissions, refreshTokenExpireDate);
+            return ResultBo.of(new TokenPair(accessTokenNew, refreshTokenNew, accessTokenExpireDate));
         }
         return ResultBo.of(tokenPair);
+    }
+
+    @Override
+    public ResultBo<Pair<Integer,Integer>> getCurrentUserIdAndSource(String accessToken) {
+        if (StringUtils.isBlank(accessToken)) {
+            return  ResultBo.of(new Pair<>(-1,-1));
+        }
+        Claims claims;
+        try {
+            claims = jwtService.parseToken(accessToken);
+            Integer userId = (Integer)claims.get(JwtConstant.USER_ID);
+            Integer userSource = (Integer)claims.get(JwtConstant.USER_SOURCE);
+            return ResultBo.of(new Pair<>(userId,userSource));
+        }catch (ExpiredJwtException e) {
+            return  ResultBo.of(new Pair<>(-1,-1));
+        }
     }
 }
