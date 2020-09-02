@@ -26,7 +26,7 @@ public class CurrentServiceImpl implements CurrentService {
     private SysUserFeignClient sysUserFeignClient;
 
     @Override
-    public ResultBo<Identity> getCurrentUserId(String accessToken) {
+    public ResultBo<Identity> getCurrentUser(String accessToken) {
         if (StringUtils.isBlank(accessToken)) {
             return ResultBo.empty();
         }
@@ -38,10 +38,11 @@ public class CurrentServiceImpl implements CurrentService {
         }
         Integer userId = (Integer)claims.get(JwtConstant.USER_ID);
         Integer userSource = (Integer)claims.get(JwtConstant.USER_SOURCE);
-        Identity identity = new Identity();
+        Identity identity = null;
         if (UserSource.SYS.source == userSource){
             ResultDto<SysUser> dto = sysUserFeignClient.findById(userId);
             if (dto.isPresent()) {
+                identity = new Identity();
                 EntityUtils.copyPropertiesIgnoreNull(dto.get(),identity);
             }
         }

@@ -34,6 +34,6 @@ public class CurrentController extends BaseController implements CurrentApi {
         }
         HttpServletRequest request = servletRequestAttributes.getRequest();
         String accessToken = request.getHeader(JwtConstant.ACCESS_TOKEN);
-        return getResultDto(currentService.getCurrentUserId(accessToken));
+        return getResultDto(currentService.getCurrentUser(accessToken));
     }
 }
