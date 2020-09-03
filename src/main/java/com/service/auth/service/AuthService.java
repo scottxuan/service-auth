@@ -4,9 +4,7 @@ package com.service.auth.service;
 import com.module.auth.dto.LoginDto;
 import com.module.auth.dto.LoginResult;
 import com.module.auth.dto.TokenPair;
-import com.scottxuan.base.pair.Pair;
 import com.scottxuan.base.result.ResultBo;
-import io.jsonwebtoken.Claims;
 
 /**
  * @author pc

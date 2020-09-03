@@ -9,14 +9,12 @@ import com.module.common.enums.UserSource;
 import com.module.common.error.ErrorCodes;
 import com.module.system.client.SysUserFeignClient;
 import com.module.system.entity.SysUser;
-import com.scottxuan.base.pair.Pair;
 import com.scottxuan.base.result.ResultBo;
 import com.scottxuan.web.result.ResultDto;
 import com.service.auth.service.AuthService;
-import com.service.auth.service.JwtService;
+import com.service.auth.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,9 +33,6 @@ public class AuthServiceImpl implements AuthService {
     @Autowired
     private SysUserFeignClient sysUserFeignClient;
 
-    @Autowired
-    private JwtService jwtService;
-
     @Override
     public ResultBo<LoginResult> login(LoginDto dto) {
         ResultDto<SysUser> resultDto = sysUserFeignClient.findByAccount(dto.getAccount());
@@ -55,9 +50,9 @@ public class AuthServiceImpl implements AuthService {
         List<String> permissions = Lists.newArrayList();
         long startMillis = System.currentTimeMillis();
         Date accessTokenExpireDate = new Date(startMillis + ACCESS_TOKEN_OUT_TIME);
-        String accessTokenNew = jwtService.createToken(sysUser.getId(), UserSource.SYS, roles, permissions, accessTokenExpireDate);
+        String accessTokenNew = JwtUtil.createToken(sysUser.getId(), UserSource.SYS, roles, permissions, accessTokenExpireDate);
         Date refreshTokenExpireDate = new Date(startMillis + REFRESH_TOKEN_OUT_TIME);
-        String refreshTokenNew = jwtService.createToken(sysUser.getId(), UserSource.SYS, roles, permissions, refreshTokenExpireDate);
+        String refreshTokenNew = JwtUtil.createToken(sysUser.getId(), UserSource.SYS, roles, permissions, refreshTokenExpireDate);
         LoginResult loginResult = new LoginResult();
         loginResult.setUserInfo(sysUser);
         loginResult.setAccessToken(accessTokenNew);
@@ -86,7 +81,7 @@ public class AuthServiceImpl implements AuthService {
         Claims claims;
         TokenPair tokenPair;
         try {
-            Claims accessTokenClaims = jwtService.parseToken(accessToken);
+            Claims accessTokenClaims = JwtUtil.parseToken(accessToken);
             tokenPair = new TokenPair();
             Date accessTokenExpireDate = accessTokenClaims.getExpiration();
             tokenPair.setAccessToken(accessToken);
@@ -94,7 +89,7 @@ public class AuthServiceImpl implements AuthService {
             tokenPair.setAccessTokenExpireDate(accessTokenExpireDate);
         } catch (ExpiredJwtException e1) {
             try {
-                claims = jwtService.parseToken(refreshToken);
+                claims = JwtUtil.parseToken(refreshToken);
             } catch (ExpiredJwtException e2) {
                 return ResultBo.of(ErrorCodes.SYS_ERROR_401);
             }
@@ -104,9 +99,9 @@ public class AuthServiceImpl implements AuthService {
             List<String> permissions = (List<String>) claims.get(JwtConstant.PERMISSIONS);
             long startMillis = System.currentTimeMillis();
             Date accessTokenExpireDate = new Date(startMillis + ACCESS_TOKEN_OUT_TIME);
-            String accessTokenNew = jwtService.createToken(userId,UserSource.getUserSource(userSource) ,roles, permissions, accessTokenExpireDate);
+            String accessTokenNew = JwtUtil.createToken(userId,UserSource.getUserSource(userSource) ,roles, permissions, accessTokenExpireDate);
             Date refreshTokenExpireDate = new Date(startMillis + REFRESH_TOKEN_OUT_TIME);
-            String refreshTokenNew = jwtService.createToken(userId, UserSource.getUserSource(userSource),roles, permissions, refreshTokenExpireDate);
+            String refreshTokenNew = JwtUtil.createToken(userId, UserSource.getUserSource(userSource),roles, permissions, refreshTokenExpireDate);
             return ResultBo.of(new TokenPair(accessTokenNew, refreshTokenNew, accessTokenExpireDate));
         }
         return ResultBo.of(tokenPair);

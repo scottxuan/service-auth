@@ -9,7 +9,7 @@ import com.scottxuan.base.result.ResultBo;
 import com.scottxuan.core.utils.EntityUtils;
 import com.scottxuan.web.result.ResultDto;
 import com.service.auth.service.CurrentService;
-import com.service.auth.service.JwtService;
+import com.service.auth.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.apache.commons.lang3.StringUtils;
@@ -18,9 +18,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CurrentServiceImpl implements CurrentService {
-
-    @Autowired
-    private JwtService jwtService;
 
     @Autowired
     private SysUserFeignClient sysUserFeignClient;
@@ -32,7 +29,7 @@ public class CurrentServiceImpl implements CurrentService {
         }
         Claims claims;
         try{
-            claims = jwtService.parseToken(accessToken);
+            claims = JwtUtil.parseToken(accessToken);
         }catch (ExpiredJwtException e) {
             return ResultBo.empty();
         }

@@ -1,13 +1,14 @@
-package com.service.auth.service.impl;
+package com.service.auth.utils;
 
 import com.module.common.constants.JwtConstant;
 import com.module.common.enums.UserSource;
 import com.scottxuan.base.utils.RSAUtils;
-import com.service.auth.service.JwtService;
 import io.jsonwebtoken.*;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Date;
@@ -19,7 +20,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @date : 2020/8/26
  */
 @Service
-public class JwtServiceImpl implements JwtService {
+public class JwtUtil{
 
     private static PrivateKey privateKey = null;
     private static PublicKey publicKey = null;
@@ -27,8 +28,7 @@ public class JwtServiceImpl implements JwtService {
     private static final AtomicBoolean PRIVATE_KEY_IS_LOAD = new AtomicBoolean(true);
     private static final AtomicBoolean PUBLIC_KEY_IS_LOAD = new AtomicBoolean(true);
 
-    @Override
-    public String createToken(Integer userId, UserSource userSource, List<String> roles, List<String> permissions, Date expireDate) {
+    public static String createToken(Integer userId, UserSource userSource, List<String> roles, List<String> permissions, Date expireDate) {
         try {
             if(PRIVATE_KEY_IS_LOAD.compareAndSet(true,false) || privateKey == null){
                 privateKey = getPrivateKey();
@@ -49,8 +49,7 @@ public class JwtServiceImpl implements JwtService {
         return null;
     }
 
-    @Override
-    public Claims parseToken(String token) {
+    public static Claims parseToken(String token) {
         if(PUBLIC_KEY_IS_LOAD.compareAndSet(true,false) || publicKey == null){
             publicKey = getPublicKey();
         }
@@ -60,11 +59,11 @@ public class JwtServiceImpl implements JwtService {
         return claimsJws.getBody();
     }
 
-    public PrivateKey getPrivateKey() {
+    private static PrivateKey getPrivateKey() {
         BufferedReader bufferedReader = null;
         PrivateKey privateKey = null;
         try {
-            bufferedReader = new BufferedReader(new FileReader(this.getClass().getResource("/privateKey.key").getPath()));
+            bufferedReader = new BufferedReader(new FileReader(JwtUtil.class.getResource("/privateKey.key").getPath()));
             StringBuilder privateKeyBuilder = new StringBuilder();
             String line;
             while ((line = bufferedReader.readLine()) != null) {
@@ -91,11 +90,11 @@ public class JwtServiceImpl implements JwtService {
         return privateKey;
     }
 
-    public PublicKey getPublicKey() {
+    private static PublicKey getPublicKey() {
         BufferedReader bufferedReader = null;
         PublicKey publicKey = null;
         try {
-            bufferedReader = new BufferedReader(new FileReader(this.getClass().getResource("/publicKey.key").getPath()));
+            bufferedReader = new BufferedReader(new FileReader(JwtUtil.class.getResource("/publicKey.key").getPath()));
             StringBuilder privateKeyBuilder = new StringBuilder();
             String line;
             while ((line = bufferedReader.readLine()) != null) {
