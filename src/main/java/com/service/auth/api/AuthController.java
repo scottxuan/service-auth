@@ -4,13 +4,11 @@ import com.module.auth.api.AuthApi;
 import com.module.auth.dto.LoginDto;
 import com.module.auth.dto.LoginResult;
 import com.module.auth.dto.TokenPair;
-import com.module.common.error.ErrorCodes;
+import com.module.system.error.ErrorCodes;
 import com.module.common.wechat.condition.WxCode2Session;
 import com.module.common.wechat.core.WxClient;
 import com.module.common.wechat.request.WxCode2SessionRequest;
 import com.module.common.wechat.response.WxCode2SessionResponse;
-import com.module.system.entity.SysUser;
-import com.scottxuan.base.pair.Pair;
 import com.scottxuan.web.base.BaseController;
 import com.scottxuan.web.result.ResultDto;
 import com.service.auth.service.AuthService;
@@ -18,10 +16,6 @@ import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-
-import javax.servlet.http.HttpServletRequest;
 
 
 /**
